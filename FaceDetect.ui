@@ -16,11 +16,25 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="select">
-      <property name="text">
-       <string>Select image</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QPushButton" name="selectImage">
+        <property name="text">
+         <string>Select image</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="selectVideo">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Select video</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QScrollArea" name="scrollArea">
@@ -33,7 +47,7 @@
          <x>0</x>
          <y>0</y>
          <width>987</width>
-         <height>615</height>
+         <height>613</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">

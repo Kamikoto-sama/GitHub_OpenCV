@@ -16,14 +16,21 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.select = QtWidgets.QPushButton(self.centralwidget)
-        self.select.setObjectName("select")
-        self.verticalLayout.addWidget(self.select)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.selectImage = QtWidgets.QPushButton(self.centralwidget)
+        self.selectImage.setObjectName("selectImage")
+        self.horizontalLayout_4.addWidget(self.selectImage)
+        self.selectVideo = QtWidgets.QPushButton(self.centralwidget)
+        self.selectVideo.setEnabled(False)
+        self.selectVideo.setObjectName("selectVideo")
+        self.horizontalLayout_4.addWidget(self.selectVideo)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 987, 615))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 987, 613))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -41,7 +48,8 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.select.setText(_translate("MainWindow", "Select image"))
+        self.selectImage.setText(_translate("MainWindow", "Select image"))
+        self.selectVideo.setText(_translate("MainWindow", "Select video"))
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import cv2
 
 def Detect_Faces(videoPath):
 	capture = cv2.VideoCapture(videoPath)
-	cascades = cv2.CascadeClassifier("haarcascade.xml")
+	cascades = cv2.CascadeClassifier("faces.xml")
 
 	while(capture.isOpened()):
 	    ret, frame = capture.read()
@@ -21,4 +21,3 @@ def Detect_Faces(videoPath):
 
 	capture.release()
 	cv2.destroyAllWindows()
-	return

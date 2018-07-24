@@ -17,13 +17,13 @@ class Main(QtWidgets.QMainWindow,Form.Ui_MainWindow):
         self.selectVideo.clicked.connect(self.SelectVideo)
 
     def SelectImage(self):
-    	try:
-    		image = QtWidgets.QFileDialog.getOpenFileName(self,"Select image",'')[0]
-    		ImageDetect.Detect_Faces(image)
-    		image = QtGui.QPixmap("image.png")
-    		self.label.setPixmap(image)
-    		os.remove("image.png")
-    	except Exception as e:print(e)
+        try:
+            image = QtWidgets.QFileDialog.getOpenFileName(self,"Select image",'')[0]
+            ImageDetect.Detect_Faces(image)
+            image = QtGui.QPixmap("image.png")
+            self.label.setPixmap(image)
+            os.remove("image.png")
+        except Exception as e:print(e)
 
     def SelectVideo(self):
       path = QtWidgets.QFileDialog.getOpenFileName(self,"Select video",'')[0]

@@ -2,12 +2,14 @@
 
 import sys
 import cv2
+from PIL import Image
 from PyQt5 import QtWidgets,QtCore,QtGui
 from PyQt5.uic import loadUi
 
 face = cv2.CascadeClassifier('face.xml')
 eye = cv2.CascadeClassifier('eye.xml')
 smile = cv2.CascadeClassifier('smile.xml')
+overlay = 'overlay.png'
 
 class Main(QtWidgets.QDialog):
     def __init__(self):
@@ -18,8 +20,8 @@ class Main(QtWidgets.QDialog):
         self.select_image.clicked.connect(self.selectImage)
         self.start.clicked.connect(self.start_cam)
         self.stop.clicked.connect(self.stop_cam)
-        self.detect.toggled.connect(self.switch_detect_face)
-        self.face_Enabled = False
+        self.detect.toggled.connect(self.switch_detect)
+        self.detect_enabled = True
         self.capture = cv2.VideoCapture(0)
 
         self.timer = QtCore.QTimer(self)
@@ -32,16 +34,16 @@ class Main(QtWidgets.QDialog):
                                                         "Select image",'')
             image = cv2.imread(path)
             image = self.detect_face(image)
-            self.displayImage(image,1)
+            self.displayImage(image)
         except Exception as e:print(e)
 
-    def switch_detect_face(self, status):
+    def switch_detect(self, status):
         if status:
-            self.detect.setText("Stop detect")
-            self.face_Enabled = True
+            self.detect.setText("Detect face")
+            self.detect_enabled = False
         else:
-            self.detect.setText("Detect")
-            self.face_Enabled = False
+            self.detect.setText("Set smile")
+            self.detect_enabled = True
 
     def start_cam(self):
         try:
@@ -53,53 +55,63 @@ class Main(QtWidgets.QDialog):
     def update(self):
         try:
             ret, self.image = self.capture.read()
-
-            if self.face_Enabled:
-                detected_image = self.detect_face(self.image)
-                self.displayImage(detected_image,1)
-            else: self.displayImage(self.image,1)    
-
+            detected_image = self.detect_face(self.image)
+            self.displayImage(detected_image)    
         except Exception as e:print(e)
 
     def detect_face(self,img):
         try:
             gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-            gray = cv2.GaussianBlur(gray,(5,5),1)
+            #gray = cv2.GaussianBlur(gray,(5,5),1)
 
-            faces = face.detectMultiScale(gray,1.3,5,minSize = (25,25))
-            for (x,y,w,h) in faces:
-                cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-                _gray = gray[y:y+h, x:x+w]
-                _img = img[y:y+h, x:x+w]
-                
-                smiles = smile.detectMultiScale(_gray, 1.5, 15,
-                                                     minSize=(25, 25),)
-                
-                for (x, y, w, h) in smiles:
-                    cv2.rectangle(
-                      _img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # Detect faces
+            faces = face.detectMultiScale(gray,1.3,5,minSize = (30,30))
 
-                eyes = eye.detectMultiScale(_gray, 1.5, 10,
+        # Draw face rectangles
+            if self.detect_enabled:
+                for (x,y,w,h) in faces:
+                    cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+                    _gray = gray[y:y+h, x:x+w]
+                    _img = img[y:y+h, x:x+w]
+
+        #Detect smiles
+                    smiles = smile.detectMultiScale(_gray, 1.5, 25,
+                                                         minSize=(25, 25))
+        #Draw smiles
+                    for (x, y, w, h) in smiles:
+                        cv2.rectangle(
+                          _img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        #Detect eyes
+                    eyes = eye.detectMultiScale(_gray, 1.5, 15,
                                                  minSize=(5, 5))
-                       
-                for (x,y,w,h) in eyes:
-                    cv2.rectangle(_img, (x, y), (x + w, y + h), 
-                                 (0, 0, 255), 2)
-            return img
+                    for (x,y,w,h) in eyes:
+                        cv2.rectangle(_img, (x, y), (x + w, y + h), 
+                                        (0, 0, 255), 2)
+        #Convert image into QImage
+            qformat = QtGui.QImage.Format_RGB888
+            outImage = QtGui.QImage(img,img.shape[1],img.shape[0],
+                                    img.strides[0],qformat)
+            outImage = outImage.rgbSwapped()
+
+        #Draw overlay
+            if not self.detect_enabled:
+                for (x,y,w,h) in faces:
+                    paint = QtGui.QPainter(outImage)
+                    image = QtGui.QPixmap(overlay)
+                    image = image.scaled(w,h)
+                    paint.drawPixmap(x,y,image)
+
+            return outImage
         except Exception as e: print(e)
 
     def stop_cam(self):
         self.timer.stop()
 
-    def displayImage(self, img,window = 1):
-        qformat = QtGui.QImage.Format_RGB888
-
-        outImage = QtGui.QImage(img,img.shape[1],img.shape[0],img.strides[0],qformat)
-        outImage = outImage.rgbSwapped()
-
-        if window == 1:
+    def displayImage(self, outImage):
+        try:
             self.display.setPixmap(QtGui.QPixmap.fromImage(outImage))
             self.display.setScaledContents(True)
+        except Exception as e:print(e)
 
 app = QtWidgets.QApplication(sys.argv)   
 exe = Main()

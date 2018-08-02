@@ -47,7 +47,7 @@
     <item>
      <widget class="QPushButton" name="detect">
       <property name="text">
-       <string>Detect</string>
+       <string>Set smile</string>
       </property>
       <property name="checkable">
        <bool>true</bool>
